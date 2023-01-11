@@ -1,8 +1,10 @@
 const inquirer = require("inquirer"); 
-const fs = require("fs");
+const fs = require("fs"); 
+const genhtml = require("./src/genhtml")
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
-const Manager = require("./lib/Manager");
+const Manager = require("./lib/Manager"); 
+const team = []; 
 
 
 function askQ() { 
@@ -29,160 +31,134 @@ function askQ() {
                 name: "officenumber", 
                 message: "What is your team manager's office number?" 
             },
+            
+        ])
+        .then((answers) => { 
+            let manager = new Manager(answers.name, answers.id, answers.email, answers.officenumber); 
+            team.push(manager); 
+            console.log(answers.officenumber);
+            newMember(); 
+            
+                 
+            
+            
+        }) 
+}; 
+
+function newMember() { 
+    inquirer
+        .prompt([ 
             { 
                 type: "list", 
                 name: "employeeType", 
                 message: "Would you like to add an intern or engineer?",
-                choices: ["Enginner", new inquirer.Separator(), "Intern", new inquirer.Separator(),  "Finish Building Team"],
+                choices: ["Engineer", new inquirer.Separator(), "Intern", new inquirer.Separator(),  "Finish Building Team"],
                 
-            }
-        ])
-        .then((name, id, email, officenumber, employeeType) => { 
-            let manager = new Manager(name, id, email, officenumber); 
-            writeHTML(); 
-            if (employeeType === "Engineer") { 
-                inquirer
-                    .prompt([
-                        { 
-                            type: input, 
-                            message: "What is your Engineer's name?", 
-                            name: "engineername", 
-
-                        },
-                    
-                        { 
-                            type: input, 
-                            message: "Enter Git Hub username", 
-                            name: "github" 
-                        }, 
-
-                        { 
-                            type: input, 
-                            message: "Enter engineer's ID number", 
-                            name: "engineerid",
-                        }, 
-                        { 
-                            type: input, 
-                            message: "Enter engineer's email", 
-                            name: "engineeremail"
-                        },
-                        
-                     
-
-                ])
-                .then((engineername, github, engineerid, engineeremail) => { 
-                    let engineer = new Engineer (engineername, github, engineerid, engineeremail); 
-                    addHTML();
-                }
-                ) 
-            } else if (employeeType === "Intern") { 
-                inquirer
-                    .prompt([
-                        { 
-                            type: input, 
-                            message: "What is your Intern's name?", 
-                            name: "internname", 
-
-                        },
-                    
-                        { 
-                            type: input, 
-                            message: "What school does the intern attend?", 
-                            name: "school" 
-                        }, 
-
-                        { 
-                            type: input, 
-                            message: "Enter intern's ID number", 
-                            name: "internid",
-                        }, 
-                        { 
-                            type: input, 
-                            message: "Enter intern's email", 
-                            name: "internemail"
-                        },
-                        
-                     
-
-                ])
-                .then((internname, internid, internemail, school) => { 
-                    let intern = new Intern (internname, internid, internemail, school)
-                    addIntHTML();
-                }) 
-            } else (employeeType === "Finish"); { 
-                console.log ("Page is complete!")  
-            }; 
+            } 
+        ]) 
+        .then((answers) => { 
+            if (answers.employeeType === "Engineer") { 
+                engineerAdd(); 
+            } else if (answers.employeeType === "Intern") { 
+                internAdd();  
+            } else { 
+                //console.log ("Page is complete!"); 
+                writeHTML(team);
+                 
+            };
         })
-}; 
+    
+   
+}
 
-askQ(); 
-function writeHTML () { 
-    const html = `<!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-        <title>Team Profile</title>
-    
-    </head>
-    <body> 
-        <header class = "section"> 
-            <a class="title">My Team</a> 
-        </header> 
-        <section class="card"> 
-        <h5>${name}</h5> 
-        <h4>Team Manager</h4>
-        <ul> 
-            <li>${id}</li>
-            <li>${email}</li> 
-            <li>${officenumber}</li>
-        </ul>
-    </section>
-    
-        
-    </body>
-    </html>` 
+/* intialize engineer prompts and html addition */
+
+function engineerAdd() { 
+        inquirer
+            .prompt([
+                { 
+                    type: "input", 
+                    message: "What is your Engineer's name?", 
+                    name: "engineername", 
+
+                },
+            
+                { 
+                    type: "input", 
+                    message: "Enter Git Hub username", 
+                    name: "github" 
+                }, 
+
+                { 
+                    type: "input", 
+                    message: "Enter engineer's ID number", 
+                    name: "engineerid",
+                }, 
+                { 
+                    type: "input", 
+                    message: "Enter engineer's email", 
+                    name: "engineeremail"
+                },
+                
+             
+
+        ])
+        .then((answers) => { 
+            let engineer = new Engineer (answers.engineername, answers.github, answers.engineerid, answers.engineeremail); 
+            team.push(engineer); 
+            newMember();
+
+        }
+        ) 
+    }; 
+
+// intialize intern prompts and add html 
+function internAdd () { 
+        inquirer
+            .prompt([
+                { 
+                    type: "input", 
+                    message: "What is your Intern's name?", 
+                    name: "internname", 
+
+                },
+            
+                { 
+                    type: "input", 
+                    message: "What school does the intern attend?", 
+                    name: "school" 
+                }, 
+
+                { 
+                    type: "input", 
+                    message: "Enter intern's ID number", 
+                    name: "internid",
+                }, 
+                { 
+                    type: "input", 
+                    message: "Enter intern's email", 
+                    name: "internemail"
+                },
+                
+             
+
+        ])
+        .then((ans) => { 
+            let intern = new Intern (ans.internname, ans.internid, ans.internemail, ans.school)
+            team.push(intern);  
+            newMember();
+
+        }) 
+    }; 
+
     fs.writeFile("./output/team.html", html, function(err) {
         if (err) {
             console.log(err);
         }
     })
-}; 
 
-function addEngHTML () { 
-    const engHTML = `<section class="card"> 
-    <h5>${name}</h5> 
-    <h4>${employeeType}</h4>
-    <ul> 
-        <li>${id}</li>
-        <li>${email}</li> 
-        <li>${github}</li>
-    </ul> 
 
-    </section>` 
-    fs.appendFile("./output/team.html", engHTML, function (err) {
-        if (err) {
-            return reject(err);
-        };
-    });
-}; 
+ 
 
-function addIntHTML () { 
-    const intHTML = `<section class="card"> 
-    <h5>${name}</h5> 
-    <h4>${employeeType}</h4>
-    <ul> 
-        <li>${id}</li>
-        <li>${email}</li> 
-        <li>${school}</li>
-    </ul> 
+askQ(); 
 
-    </section>` 
-    fs.appendFile("./output/team.html", engHTML, function (err) {
-        if (err) {
-            return reject(err);
-        };
-    });
-}
