@@ -1,6 +1,6 @@
 const inquirer = require("inquirer"); 
 const fs = require("fs"); 
-const genhtml = require("./src/genhtml")
+//const genhtml = require("./src/genhtml")
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
 const Manager = require("./lib/Manager"); 
@@ -13,7 +13,7 @@ function askQ() {
             { 
                 type: "input", 
                 name: "name", 
-                message: "What is your team manager name?"
+                message: "What is your team manager name?",
             }, 
             { 
                 type: "input",
@@ -24,19 +24,25 @@ function askQ() {
             { 
                 type: "input", 
                 name: "email", 
-                message: "What is your team manager's email?" 
+                message: "What is your team manager's email?", 
             }, 
             { 
                 type: "input", 
                 name: "officenumber", 
-                message: "What is your team manager's office number?" 
+                message: "What is your team manager's office number?", 
             },
             
         ])
         .then((answers) => { 
             let manager = new Manager(answers.name, answers.id, answers.email, answers.officenumber); 
             team.push(manager); 
-            console.log(answers.officenumber);
+            //console.log(answers.officenumber); 
+            const htmlContent = writeHtml(manager); 
+            fs.writeFile("./dist/team.html", htmlContent, function(err) {
+                        if (err) {
+                            console.log(err);
+                        }
+                    })
             newMember(); 
             
                  
@@ -63,7 +69,11 @@ function newMember() {
                 internAdd();  
             } else { 
                 //console.log ("Page is complete!"); 
-                writeHTML(team);
+                fs.appendFile("./dist/team.html", endHtml, function (err) {
+                    if (err) {
+                        return reject(err);
+                    };
+                });
                  
             };
         })
@@ -79,33 +89,39 @@ function engineerAdd() {
                 { 
                     type: "input", 
                     message: "What is your Engineer's name?", 
-                    name: "engineername", 
+                    name: "name", 
 
                 },
             
                 { 
                     type: "input", 
                     message: "Enter Git Hub username", 
-                    name: "github" 
+                    name: "github", 
                 }, 
 
                 { 
                     type: "input", 
                     message: "Enter engineer's ID number", 
-                    name: "engineerid",
+                    name: "id",
                 }, 
                 { 
                     type: "input", 
                     message: "Enter engineer's email", 
-                    name: "engineeremail"
+                    name: "email",
                 },
                 
              
 
         ])
         .then((answers) => { 
-            let engineer = new Engineer (answers.engineername, answers.github, answers.engineerid, answers.engineeremail); 
+            let engineer = new Engineer (answers.name, answers.github, answers.id, answers.email); 
             team.push(engineer); 
+            const newEngHtml = engHTML(engineer); 
+            fs.appendFile("./dist/team.html", newEngHtml, function (err) {
+                if (err) {
+                    return reject(err);
+                };
+            });
             newMember();
 
         }
@@ -119,44 +135,115 @@ function internAdd () {
                 { 
                     type: "input", 
                     message: "What is your Intern's name?", 
-                    name: "internname", 
+                    name: "name", 
 
                 },
             
                 { 
                     type: "input", 
                     message: "What school does the intern attend?", 
-                    name: "school" 
+                    name: "school", 
                 }, 
 
                 { 
                     type: "input", 
                     message: "Enter intern's ID number", 
-                    name: "internid",
+                    name: "id",
                 }, 
                 { 
                     type: "input", 
                     message: "Enter intern's email", 
-                    name: "internemail"
+                    name: "email",
                 },
                 
              
 
         ])
         .then((ans) => { 
-            let intern = new Intern (ans.internname, ans.internid, ans.internemail, ans.school)
-            team.push(intern);  
+            let intern = new Intern (ans.name, ans.id, ans.email, ans.school)
+            team.push(intern); 
+            const newIntHtml = intHTML(intern); 
+            fs.appendFile("./dist/team.html", newIntHtml, function (err) {
+                if (err) {
+                    return reject(err);
+                };
+            });   
             newMember();
 
         }) 
     }; 
 
-    fs.writeFile("./output/team.html", html, function(err) {
-        if (err) {
-            console.log(err);
-        }
-    })
 
+
+
+    const writeHtml = ({name, id, email, officenumber}) =>`<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <title>Team Profile</title>
+    
+    </head>
+    <body> 
+    <div class="container">
+    <div class="row">
+        <header class = "section"> 
+        <nav class="navbar navbar-dark bg-dark mb-5">
+            <span class="navbar-brand mb-0 h1 w-100 text-center">Team Profile</span>
+        </nav> 
+        </header> 
+        <section class="card mx-auto mb-3" style="width: 18rem"> 
+        <h4 class= "card-header">${name}</h5> 
+        <h5 class= "card-header"> Team Manager</h4>
+        <ul class="list-group list-group-flush"> 
+            <li class="list-group-item">ID:${id}</li>
+            <li class="list-group-item">Email: <a href = mailto:${email}</li> 
+            <li class="list-group-item">Office Number:${officenumber}</li>
+        </ul>
+    </section> 
+    `
+    
+        
+    // </body>
+    // </html>` 
+     
+
+ 
+const engHTML = ({name, id, email, github}) => `<section class="card mx-auto mb-3" style="width: 18rem"> 
+    <h4 class= "card-header">${name}</h5> 
+    <h5 class= "card-header">Engineer</h4>
+    <ul class="list-group list-group-flush"> 
+        <li class="list-group-item">ID:${id}</li>
+        <li class="list-group-item">Email: <a href = mailto:${email}>${email}></li> 
+        <li class="list-group-item">Github:${github}</li>
+    </ul> 
+
+    </section>` 
+    
+ 
+
+
+const intHTML = ({name, id, email, school}) =>`<section class="card mx-auto mb-3" style="width: 18rem"> 
+    <h5 class= "card-header">${name}</h5> 
+    <h4 class= "card-header">Intern</h4>
+    <ul class="list-group list-group-flush"> 
+        <li class="list-group-item">ID:${id}</li>
+        <li class="list-group-item">Email:<a href = mailto: ${email}>${email}></li> 
+        <li class="list-group-item">School:${school}</li>
+    </ul> 
+
+    </section>` 
+    
+
+
+const endHtml = ` 
+</div>
+    </div>
+
+</body>
+ </html>`
 
  
 

@@ -1,6 +1,7 @@
-const Engineer = require("./lib/Engineer");
-const Intern = require("./lib/Intern");
-const Manager = require("./lib/Manager"); 
+const Engineer = require("../lib/Engineer");
+const Intern = require("../lib/Intern");
+const Manager = require("../lib/Manager"); 
+
 
  
 const html = ({Manager}) =>`<!DOCTYPE html>
@@ -43,11 +44,11 @@ const engHTML = ({ Engineer }) => `<section class="card">
     </ul> 
 
     </section>` 
-    fs.appendFile("./output/team.html", engHTML, function (err) {
-        if (err) {
-            return reject(err);
-        };
-    });
+    //fs.appendFile("./output/team.html", engHTML, function (err) {
+        //if (err) {
+            //return reject(err);
+        //};
+    
  
 
 
@@ -61,10 +62,10 @@ const intHTML = ({ Intern}) =>`<section class="card">
     </ul> 
 
     </section>` 
-    fs.appendFile("./output/team.html", engHTML, function (err) {
-        if (err) {
-            return reject(err);
-        };
-    }); 
+    // fs.appendFile("./output/team.html", engHTML, function (err) {
+    //     if (err) {
+    //         return reject(err);
+    //     };
+    // }); 
 
 module.exports = genhtml; 
