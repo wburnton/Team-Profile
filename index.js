@@ -91,14 +91,7 @@ function engineerAdd() {
                     message: "What is your Engineer's name?", 
                     name: "name", 
 
-                },
-            
-                { 
-                    type: "input", 
-                    message: "Enter Git Hub username", 
-                    name: "github", 
                 }, 
-
                 { 
                     type: "input", 
                     message: "Enter engineer's ID number", 
@@ -109,12 +102,21 @@ function engineerAdd() {
                     message: "Enter engineer's email", 
                     name: "email",
                 },
+            
+                { 
+                    type: "input", 
+                    message: "Enter Git Hub username", 
+                    name: "github", 
+                }, 
+
+                
+                
                 
              
 
         ])
         .then((answers) => { 
-            let engineer = new Engineer (answers.name, answers.github, answers.id, answers.email); 
+            let engineer = new Engineer (answers.name, answers.id, answers.email, answers.github); 
             team.push(engineer); 
             const newEngHtml = engHTML(engineer); 
             fs.appendFile("./dist/team.html", newEngHtml, function (err) {
@@ -199,7 +201,7 @@ function internAdd () {
         <h5 class= "card-header"> Team Manager</h4>
         <ul class="list-group list-group-flush"> 
             <li class="list-group-item">ID:${id}</li>
-            <li class="list-group-item">Email: <a href = mailto:${email}</li> 
+            <li class="list-group-item">Email: <a href = mailto: ${email}>${email}</a></li> 
             <li class="list-group-item">Office Number:${officenumber}</li>
         </ul>
     </section> 
@@ -216,8 +218,8 @@ const engHTML = ({name, id, email, github}) => `<section class="card mx-auto mb-
     <h5 class= "card-header">Engineer</h4>
     <ul class="list-group list-group-flush"> 
         <li class="list-group-item">ID:${id}</li>
-        <li class="list-group-item">Email: <a href = mailto:${email}>${email}></li> 
-        <li class="list-group-item">Github:${github}</li>
+        <li class="list-group-item">Email: <a href = mailto: ${email}>${email}</a></li> 
+        <li class="list-group-item">Github:<a href = github.com/${github}> ${github}</a></li>
     </ul> 
 
     </section>` 
@@ -230,7 +232,7 @@ const intHTML = ({name, id, email, school}) =>`<section class="card mx-auto mb-3
     <h4 class= "card-header">Intern</h4>
     <ul class="list-group list-group-flush"> 
         <li class="list-group-item">ID:${id}</li>
-        <li class="list-group-item">Email:<a href = mailto: ${email}>${email}></li> 
+        <li class="list-group-item">Email:<a href = mailto: ${email}>${email}</a></li> 
         <li class="list-group-item">School:${school}</li>
     </ul> 
 
